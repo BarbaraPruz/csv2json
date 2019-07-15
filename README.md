@@ -4,6 +4,8 @@ Convert csv file to JSON that can be used for elasticsearch bulk command.
 Output from csv2json will containg both a mappings object (based on the CSV headers) 
 and a bulk object (based on the CSV data)
 
+Some Rules/Conversions applied:
+- $nnn,nnn converted to a float number
 ## Running
 
 # bundle install

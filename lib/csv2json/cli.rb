@@ -5,7 +5,12 @@ class Csv2json::CLI
     def build_hash (row) 
         hash = Hash.new
         @headers.each do | field |
-            hash[field]=row.shift
+            val = row.shift
+            if val
+                val = (val[0]=='$') ? val.delete("$,") : val;
+                val.strip!
+            end
+            hash[field]= val
         end
         hash
     end
