@@ -64,11 +64,10 @@ class Csv2json::CLI
         file.write "mappings=#{get_mappings}"
 
         file.write "\nbulk data=" 
-        rows_last_index = rows.count - 1      
         rows.each_with_index do | row, index |
-            json_string = "{\"index\": { \"_id\": #{index+1}}}"
-            json_string += JSON.pretty_generate build_hash row
-            json_string += (index == rows_last_index) ? "\n" : ",\n" 
+            json_string = "{\"index\": { \"_id\": #{index+1}}}\n"
+            json_string += JSON.dump build_hash row
+            json_string += "\n"
             file.write json_string
         end
         file.close
