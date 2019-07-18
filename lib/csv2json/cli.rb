@@ -6,13 +6,26 @@ class Csv2json::CLI
         hash = Hash.new
         @headers.each do | field |
             val = row.shift
-            if val
-                val = (val[0]=='$') ? val.delete("$,") : val;
-                val.strip!
+            if val 
+                if isPrice? field
+                    val = (val[0]=='$') ? val.delete("$,") : val;
+                elsif isDate? field
+                    vals = val.split('/').map{ |e| format('%02d', e) } 
+                    val = "#{vals[2]}-#{vals[0]}-#{vals[1]}"
+                end
+                val = val.strip
             end
             hash[field]= val
         end
         hash
+    end
+
+    def isPrice?(str)
+        str =~ /price/i
+    end
+
+    def isDate?(str)
+        str =~ /date/i
     end
 
     def get_file_names
@@ -22,14 +35,12 @@ class Csv2json::CLI
         @output_file = gets.chomp 
     end
 
-    # def endFieldsCheck(index,last)
-    #     index == last ? "}" 
+ #TODO: mapping set the type : if heading is price, set to long, if heading has date, set to date
     def get_mappings
         mappings = <<~JS
         {
             \"properties\": {
         JS
-
         last_index = @headers.length - 1
         @headers.each_with_index do |field, index|
             mappings+= <<-JS
@@ -50,6 +61,7 @@ class Csv2json::CLI
         JS
         mappings
     end
+
 
     def call
         puts "csv 2 json"
